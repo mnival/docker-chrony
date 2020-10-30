@@ -15,7 +15,11 @@ foreach (sort keys %ENV) {
 	my $_key=$_;
 	if ( $_ =~ m/chronyconf\.(.*)/ ) {
 		foreach (split (/;/, $ENV{$_key})) {
-			printf $_fh ("%s %s\n", $1, $_);
+			if ($_ eq "novalue") {
+				printf $_fh ("%s\n", $1);
+			} else {
+				printf $_fh ("%s %s\n", $1, $_);
+			}
 		}
 	}
 }
@@ -23,7 +27,9 @@ foreach (sort keys %ENV) {
 if ( $ENV{'chrony.args'} =~ m/\$|;/ ) {
 	printf ("Value prohibited in chrony.args variable\n");
 } else {
-	printf ("exec chronyd -d -u _chrony $ENV{'chrony.args'}");
+	if (-e $_chrony_pid) {
+		unlink $_chrony_pid;
+	}
 	exec ("exec chronyd -d -u _chrony $ENV{'chrony.args'}");
 }
 
