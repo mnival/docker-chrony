@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my ($_fh);
+my $_file_conf = ('/etc/chrony/chrony.conf');
+my @_lists_chown = ($ENV{'chronyconf.logdir'}, '/var/lib/chrony');
+
+die if system ("usermod _chrony -u $ENV{'chrony.uid'}") != 0;
+die if system ("groupmod _chrony -g $ENV{'chrony.gid'}") != 0;
+chown ($ENV{'chrony.uid'}, $ENV{'chrony.gid'}, @_lists_chown);
+
+open($_fh, '>', $_file_conf);
+foreach (sort keys %ENV) {
+	my $_key=$_;
+	if ( $_ =~ m/chronyconf\.(.*)/ ) {
+		foreach (split (/;/, $ENV{$_key})) {
+			printf $_fh ("%s %s\n", $1, $_);
+		}
+	}
+}
+
+if ( $ENV{'chrony.args'} =~ m/\$|;/ ) {
+	printf ("Value prohibited in chrony.args variable\n");
+} else {
+	printf ("exec chronyd -d -u _chrony $ENV{'chrony.args'}");
+	exec ("exec chronyd -d -u _chrony $ENV{'chrony.args'}");
+}
+
