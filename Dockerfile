@@ -31,6 +31,8 @@ ENV chronyconf.pool="0.debian.pool.ntp.org iburst;1.debian.pool.ntp.org iburst;2
 	chrony.gid=110 \
 	chrony.args="-F -1"
 
+HEALTHCHECK CMD chronyc tracking || exit 1
+
 EXPOSE 123/udp
 
 ENTRYPOINT ["start-chrony"]
