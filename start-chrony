@@ -4,7 +4,8 @@ use warnings;
 
 my ($_fh);
 my $_file_conf = ('/etc/chrony/chrony.conf');
-my @_lists_chown = ($ENV{'chronyconf.logdir'}, '/var/lib/chrony');
+my $_chrony_pid='/run/chronyd.pid';
+my @_lists_chown = ('/var/lib/chrony');
 
 die if system ("usermod _chrony -u $ENV{'chrony.uid'}") != 0;
 die if system ("groupmod _chrony -g $ENV{'chrony.gid'}") != 0;
@@ -32,4 +33,3 @@ if ( $ENV{'chrony.args'} =~ m/\$|;/ ) {
 	}
 	exec ("exec chronyd -d -u _chrony $ENV{'chrony.args'}");
 }
-
