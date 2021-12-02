@@ -1,3 +1,6 @@
+
+!!! This version is no longer maintained. Please use https://github.com/mnival/alpine-chrony !!!
+
 Docker debian-chrony
 ============
 
